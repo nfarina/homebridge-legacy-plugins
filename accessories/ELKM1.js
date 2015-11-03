@@ -1,4 +1,4 @@
-var types = require("hap-nodejs/accessories/types.js");
+var types = require("../api").homebridge.hapLegacyTypes;
 var elkington = require("elkington");
 
 function ElkM1Accessory(log, config) {

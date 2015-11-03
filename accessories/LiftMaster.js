@@ -1,4 +1,4 @@
-var types = require("hap-nodejs/accessories/types.js");
+var types = require("../api").homebridge.hapLegacyTypes;
 var request = require("request");
 
 // This seems to be the "id" of the official LiftMaster iOS app

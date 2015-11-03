@@ -1,5 +1,5 @@
-var Service = require("hap-nodejs").Service;
-var Characteristic = require("hap-nodejs").Characteristic;
+var Service = require("../api").homebridge.hap.Service;
+var Characteristic = require("../api").homebridge.hap.Characteristic;
 var SerialPort = require("serialport").SerialPort;
 
 module.exports = {
