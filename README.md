@@ -5,7 +5,7 @@ This repository contains all the plugins that were previously bundled in the mai
 
 # Installation
 
-This plugin is published via [NPM](https://www.npmjs.com/package/homebridge) and should be installed "globally" by typing:
+This plugin is published via [NPM](https://www.npmjs.com/package/homebridge-legacy-plugins) and should be installed "globally" by typing:
 
     npm install -g homebridge-legacy-plugins
 
