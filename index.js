@@ -33,7 +33,7 @@ module.exports = function(homebridge) {
         console.log("Loading legacy platform " + name);
         
         var platformModule = require(path.join(platformsDir, file));
-        return new platformModule.accessory(logger, config);
+        return new platformModule.platform(logger, config);
       });
     }
   });
