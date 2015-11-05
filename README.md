@@ -24,5 +24,5 @@ Here's what has been removed so far, along with a link to the replacement plugin
 
   * [isy-js](https://github.com/rodtoll/homebridge-isy-js)
   * [KNX](https://github.com/snowdd1/homebridge-knx)
-  * [Netatmo](Now located at: https://github.com/planetk/homebridge-netatmo)
+  * [Netatmo](https://github.com/planetk/homebridge-netatmo)
 
