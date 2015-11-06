@@ -27,3 +27,4 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [Netatmo](https://github.com/planetk/homebridge-netatmo)
   * [Fibaro Home Center 2](https://github.com/ilcato/homebridge-Fibaro-HC2)
   * [HTTP](https://github.com/rudders/homebridge-http)
+  * [Nest](https://github.com/kraigm/homebridge-nest)
