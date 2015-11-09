@@ -31,3 +31,4 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [HomeMatic Platform](https://github.com/thkl/homebridge-homematic)
   * [Philips Hue](https://github.com/thkl/homebridge-philipshue)
   * [FHEM](https://github.com/justme-1968/homebridge-fhem.git)
+  * [Sonos](https://github.com/nfarina/homebridge-sonos)
