@@ -29,3 +29,4 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [HTTP](https://github.com/rudders/homebridge-http)
   * [Nest](https://github.com/kraigm/homebridge-nest)
   * [HomeMatic Platform](https://github.com/thkl/homebridge-homematic)
+  * [Philips Hue](https://github.com/thkl/homebridge-philipshue)
