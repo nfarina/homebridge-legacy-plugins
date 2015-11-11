@@ -33,3 +33,4 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [FHEM](https://github.com/justme-1968/homebridge-fhem.git)
   * [Sonos](https://github.com/nfarina/homebridge-sonos)
   * [Indigo](https://www.npmjs.com/package/homebridge-indigo)
+  * [Logitech Harmony](https://www.npmjs.com/package/homebridge-harmonyhub)
