@@ -34,3 +34,4 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [Sonos](https://github.com/nfarina/homebridge-sonos)
   * [Indigo](https://www.npmjs.com/package/homebridge-indigo)
   * [Logitech Harmony](https://www.npmjs.com/package/homebridge-harmonyhub)
+  * [Telldus](https://github.com/johngson/homebridge-telldus)
