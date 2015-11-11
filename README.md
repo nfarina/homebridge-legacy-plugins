@@ -22,6 +22,7 @@ As authors of the legacy accessories and platforms create new standalone plugins
 
 Here's what has been removed so far, along with a link to the replacement plugin:
 
+  * [telldus](https://github.com/johngson/homebridge-telldus)
   * [isy-js](https://github.com/rodtoll/homebridge-isy-js)
   * [KNX](https://github.com/snowdd1/homebridge-knx)
   * [Netatmo](https://github.com/planetk/homebridge-netatmo)
