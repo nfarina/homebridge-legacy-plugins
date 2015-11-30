@@ -13,7 +13,7 @@ This repository contains all the plugins that were previously bundled in the mai
 
 This plugin is published via [NPM](https://www.npmjs.com/package/homebridge-legacy-plugins) and should be installed "globally" by typing:
 
-    npm install -g homebridge-legacy-plugins
+    sudo npm install -g homebridge-legacy-plugins
 
 You may have to execute commands with `sudo` depending on your system. Now you should be able to run Homebridge:
 
