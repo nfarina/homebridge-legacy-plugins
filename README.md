@@ -5,6 +5,12 @@ This repository contains all the plugins that were previously bundled in the mai
 
 # Installation
 
+**NOTE**: If you are running on a linux machine (like Raspberry Pi), you will need to first install the Kerberos development libraries:
+
+```sh
+    sudo apt-get install libkrb5-dev
+```
+
 This plugin is published via [NPM](https://www.npmjs.com/package/homebridge-legacy-plugins) and should be installed "globally" by typing:
 
     npm install -g homebridge-legacy-plugins
