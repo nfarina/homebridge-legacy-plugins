@@ -41,3 +41,8 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [Indigo](https://www.npmjs.com/package/homebridge-indigo)
   * [Logitech Harmony](https://www.npmjs.com/package/homebridge-harmonyhub)
   * [Telldus](https://github.com/johngson/homebridge-telldus)
+  * [Hyperion](https://github.com/danimal4326/homebridge-hyperion)
+  * [WeMo](https://github.com/rudders/homebridge-wemo)
+  * [iControl](https://github.com/nfarina/homebridge-icontrol)
+  * [LiftMaster](https://github.com/nfarina/homebridge-liftmaster)
+  * [Lockitron](https://github.com/nfarina/homebridge-lockitron)
