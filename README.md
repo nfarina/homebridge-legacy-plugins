@@ -5,9 +5,15 @@ This repository contains all the plugins that were previously bundled in the mai
 
 # Installation
 
+**NOTE**: If you are running on a linux machine (like Raspberry Pi), you will need to first install the Kerberos development libraries:
+
+```sh
+    sudo apt-get install libkrb5-dev
+```
+
 This plugin is published via [NPM](https://www.npmjs.com/package/homebridge-legacy-plugins) and should be installed "globally" by typing:
 
-    npm install -g homebridge-legacy-plugins
+    sudo npm install -g homebridge-legacy-plugins
 
 You may have to execute commands with `sudo` depending on your system. Now you should be able to run Homebridge:
 
@@ -35,3 +41,8 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [Indigo](https://www.npmjs.com/package/homebridge-indigo)
   * [Logitech Harmony](https://www.npmjs.com/package/homebridge-harmonyhub)
   * [Telldus](https://github.com/johngson/homebridge-telldus)
+  * [Hyperion](https://github.com/danimal4326/homebridge-hyperion)
+  * [WeMo](https://github.com/rudders/homebridge-wemo)
+  * [iControl](https://github.com/nfarina/homebridge-icontrol)
+  * [LiftMaster](https://github.com/nfarina/homebridge-liftmaster)
+  * [Lockitron](https://github.com/nfarina/homebridge-lockitron)
