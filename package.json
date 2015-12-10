@@ -28,7 +28,6 @@
     "lifx": "git+https://github.com/magicmonkey/lifxjs.git",
     "lifx-api": "^1.0.1",
     "mdns": "^2.2.4",
-    "node-milight-promise": "0.0.x",
     "q": "1.4.x",
     "request": "2.49.x",
     "telldus-live": "^0.2.1",
