@@ -48,3 +48,4 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [Lockitron](https://github.com/nfarina/homebridge-lockitron)
   * [openHAB](https://github.com/tommasomarchionni/homebridge-openhab)
   * [Wink](https://github.com/kraigm/homebridge-wink)
+  * [MiLght](https://github.com/dotsam/homebridge-milight)
