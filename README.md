@@ -49,3 +49,4 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [openHAB](https://github.com/tommasomarchionni/homebridge-openhab)
   * [Wink](https://github.com/kraigm/homebridge-wink)
   * [MiLght](https://github.com/dotsam/homebridge-milight)
+  * [Yamaha](https://github.com/neonightmare/homebridge-yamaha)
