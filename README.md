@@ -46,3 +46,7 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [iControl](https://github.com/nfarina/homebridge-icontrol)
   * [LiftMaster](https://github.com/nfarina/homebridge-liftmaster)
   * [Lockitron](https://github.com/nfarina/homebridge-lockitron)
+  * [openHAB](https://github.com/tommasomarchionni/homebridge-openhab)
+  * [Wink](https://github.com/kraigm/homebridge-wink)
+  * [MiLght](https://github.com/dotsam/homebridge-milight)
+  * [Yamaha](https://github.com/neonightmare/homebridge-yamaha)

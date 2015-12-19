@@ -1,7 +1,7 @@
 {
   "name": "homebridge-legacy-plugins",
   "description": "Legacy plugins for homebridge: https://github.com/nfarina/homebridge",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/nfarina/homebridge-legacy-plugins.git"
@@ -19,24 +19,17 @@
     "ad2usb": "git+https://github.com/alistairg/node-ad2usb.git#local",
     "carwingsjs": "0.0.x",
     "chokidar": "^1.0.5",
-    "core-util-is": "^1.0.1",
     "debug": "^2.2.0",
     "eibd": "^0.3.1",
     "elkington": "kevinohara80/elkington",
-    "inherits": "^2.0.1",
     "komponist": "0.1.0",
     "lifx": "git+https://github.com/magicmonkey/lifxjs.git",
     "lifx-api": "^1.0.1",
-    "mdns": "^2.2.4",
-    "node-milight-promise": "0.0.x",
     "q": "1.4.x",
     "request": "2.49.x",
     "telldus-live": "^0.2.1",
     "teslams": "1.0.1",
     "tough-cookie": "^2.0.0",
-    "wink-js": "0.0.5",
-    "ws": "^0.8.0",
-    "xml2js": "0.4.x",
-    "yamaha-nodejs": "0.4.x"
+    "xml2js": "0.4.x"
   }
 }
