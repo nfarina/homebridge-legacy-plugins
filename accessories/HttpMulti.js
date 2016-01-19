@@ -1,4 +1,13 @@
-//switch and lock to set up
+// switch 
+// thermostat?
+// how to query status?
+// clean up services data structure
+// simplify 
+// post method
+// X case insensitive matching
+// X serial, hash name?
+// X garagedoor open/close
+
 var types = require("../api").homebridge.hapLegacyTypes;
 
 var request = require("request");
@@ -7,25 +16,33 @@ function HttpMulti(log, config) {
   this.log = log;
   this.up_url = config["up_url"];
   this.down_url = config["down_url"];
+  this.open_url = config["open_url"];
+  this.clode_url = config["close_url"];  
   this.on_url = config["on_url"];
   this.off_url = config["off_url"];
   this.lock_url = config["lock_url"];
   this.unlock_url = config["unlock_url"];
   this.brightness_url = config["brightness_url"];
   this.name = config["name"];
-  this.deviceID = config["device_id"];
-  this.canDim = config["can_dim"];
-  this.deviceType = config["deviceType"]
+  this.deviceType = config["deviceType"];
+  this.method = config["http_method"];
+  if (this.method === undefined) this.method = "GET";
   this.serviceName = config["serviceName"];
-  if (this.serviceName === undefined) this.serviceName = this.name 
+  if (this.serviceName === undefined) this.serviceName = this.name;
   this.manufacturer = config["accessory"];
-  if (this.manufacturer === undefined) this.manufacturer = "HttpMulti inc.";
   this.model = config["model"];
   if (this.model === undefined) this.model = this.deviceType;
   this.serialNum = config["serialNum"];
-  if (this.serialNum === undefined) this.serialNum = this.deviceType+"."+this.name;
-  this.log("HttpMulti Initialization complete for "+this.deviceType+" "+this.name);
-
+  if (this.serialNum === undefined) {
+  	var hash;
+  	for (var i = 0; i < this.name.length; i++) {
+  		var character  = this.name.charCodeAt(i);
+        hash  = ((hash<<5)-hash)+character;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+  	this.serialNum = "X"+Math.abs(hash);
+  }
+  this.log("HttpMulti Initialization complete for "+this.deviceType+" "+this.name+" "+this.serialNum+" "+this.serviceName+" "+this.model);
 }
 
 
@@ -34,13 +51,13 @@ HttpMulti.prototype = {
   setPowerState: function(powerOn) {
 
     var that = this;
-    if (this.deviceType == "blind") {
+    if (this.deviceType.toUpperCase() == "BLIND") {
     	var myURL = powerOn ? this.up_url : this.down_url ;
     	
-	} else if (this.deviceType == "garagedoor") {
-		var myURL = powerOn ? this.down_url : this.up_url ;  
+	} else if (this.deviceType.toUpperCase() == "GARAGEDOOR") {
+		var myURL = powerOn ? this.close_url : this.open_url ;  
 		  	
-	} else if (this.deviceType == "lock") {
+	} else if (this.deviceType.toUpperCase() == "LOCK") {
 		var myURL = powerOn ? this.lock_url : this.unlock_url ;
 		
     } else {
@@ -50,20 +67,20 @@ HttpMulti.prototype = {
     this.log("URL = "+myURL);
     this.log("Setting "+this.deviceType+" state to " + powerOn);
 
-	// Add in put method
-    request.get({
-           //url: "http://"+this.user + ":" + this.pass + "@" + this.host + ":" + this.port + "/" +"3?0262" + this.deviceID + command + onOffState+ "=I=3",
+	if (this.method.toUpperCase() == "POST") {
+		this.log("Post method not supported yet");
+	} else {
+    	request.get({
            url: myURL,
+  		 }, function(err, response, body) {
 
-   }, function(err, response, body) {
-
-       if (!err && response.statusCode == 200) {
-         that.log("State change sent to http module.");
-       }
-       else {
-        that.log("Some errors...happened please try again");
-       }
-     });
+       		if (!err && response.statusCode == 200) {
+         		that.log("State change sent to http module.");
+       		} else {
+        		that.log("Some errors...happened please try again");
+       		}
+     	});
+     }
 
   },
 
@@ -72,9 +89,9 @@ HttpMulti.prototype = {
 
     var that = this;
 
-    levelInt = parseInt(value)*255/100;
-    var intvalue = Math.ceil( levelInt );
-    var hexString2 = ("0" + intvalue.toString(16)).substr(-2);
+//    levelInt = parseInt(value)*255/100;
+//    var intvalue = Math.ceil( levelInt );
+//    var hexString2 = ("0" + intvalue.toString(16)).substr(-2);
 
 	var myURL = this.brightness_url;
 	
@@ -102,7 +119,7 @@ HttpMulti.prototype = {
     var myType = types.LIGHTBULB_STYPE;
     var services;
 
-    if (this.deviceType == "lightBulb") {
+    if (this.deviceType.toUpperCase() == "LIGHTBULB" || this.deviceType.toUpperCase() == "LIGHT" )  {
       myType = types.LIGHTBULB_STYPE;
       services = [{
       sType: types.ACCESSORY_INFORMATION_STYPE,
@@ -285,10 +302,10 @@ HttpMulti.prototype = {
     }];
       
     }
-    if (this.deviceType == "switch") {
+    if (this.deviceType.toUpperCase() == "SWITCH") {
       myType = types.SWITCH_STYPE;
     }
-    if (this.deviceType == "lock") {
+    if (this.deviceType.toUpperCase() == "LOCK") {
       myType = types.LOCK_MECHANISM_STYPE;
      services = [{
       sType: types.ACCESSORY_INFORMATION_STYPE,
@@ -501,7 +518,7 @@ HttpMulti.prototype = {
     }];
       
     }
-    if (this.deviceType == "garagedoor") {
+    if (this.deviceType.toUpperCase() == "GARAGEDOOR") {
       myType = types.GARAGE_DOOR_OPENER_STYPE;
       services = [{
       sType: types.ACCESSORY_INFORMATION_STYPE,
@@ -575,7 +592,7 @@ HttpMulti.prototype = {
     	},
     	onRead: function(callback) {
     		console.log("Garage Door - current door state Read");
-    		callback(undefined); // only testing, we have no physical device to read from
+    		//callback(undefined); // only testing, we have no physical device to read from
     	},
     	perms: ["pr","ev"],
 		format: "int",
