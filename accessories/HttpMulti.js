@@ -3,10 +3,12 @@
 // how to query status?
 // clean up services data structure
 // simplify 
-// post method
+// X post method
 // X case insensitive matching
 // X serial, hash name?
 // X garagedoor open/close
+// fan level
+// Set the XXX to XX% doesn't seem to work
 
 var types = require("../api").homebridge.hapLegacyTypes;
 
@@ -42,7 +44,7 @@ function HttpMulti(log, config) {
     }
   	this.serialNum = "X"+Math.abs(hash);
   }
-  this.log("HttpMulti Initialization complete for "+this.deviceType+" "+this.name+" "+this.serialNum+" "+this.serviceName+" "+this.model);
+  this.log("HttpMulti Initialization complete for "+this.deviceType+":"+this.name+":"+this.serialNum);
 }
 
 
@@ -68,8 +70,17 @@ HttpMulti.prototype = {
     this.log("Setting "+this.deviceType+" state to " + powerOn);
 
 	if (this.method.toUpperCase() == "POST") {
-		this.log("Post method not supported yet");
-	} else {
+    	request.post({
+           url: myURL,
+  		 }, function(err, response, body) {
+
+       		if (!err && response.statusCode == 200) {
+         		that.log("State change sent to http module.");
+       		} else {
+        		that.log("Some errors...happened please try again");
+       		}
+     	});
+     } else {
     	request.get({
            url: myURL,
   		 }, function(err, response, body) {
@@ -89,10 +100,6 @@ HttpMulti.prototype = {
 
     var that = this;
 
-//    levelInt = parseInt(value)*255/100;
-//    var intvalue = Math.ceil( levelInt );
-//    var hexString2 = ("0" + intvalue.toString(16)).substr(-2);
-
 	var myURL = this.brightness_url;
 	
 	// replace %VALUE% with value in the URL
@@ -100,6 +107,19 @@ HttpMulti.prototype = {
 	
     this.log(myURL);
     this.log("Setting brightness level of "+this.deviceType+" to "+value);
+
+	if (this.method.toUpperCase() == "POST") {
+    	request.post({
+           url: myURL,
+  		 }, function(err, response, body) {
+
+       		if (!err && response.statusCode == 200) {
+         		that.log("State change sent to http module.");
+       		} else {
+        		that.log("Some errors...happened please try again");
+       		}
+     	});
+     } else {
 
     request.get({
        url: myURL,
@@ -112,16 +132,12 @@ HttpMulti.prototype = {
          that.log("Error '"+err+"' setting brightness level: " + body);
        }
      });
+    }
   },
 
   getServices: function() {
     var that = this;
-    var myType = types.LIGHTBULB_STYPE;
-    var services;
-
-    if (this.deviceType.toUpperCase() == "LIGHTBULB" || this.deviceType.toUpperCase() == "LIGHT" )  {
-      myType = types.LIGHTBULB_STYPE;
-      services = [{
+    var services = [{
       sType: types.ACCESSORY_INFORMATION_STYPE,
       characteristics: [{
           cType: types.NAME_CTYPE,
@@ -174,7 +190,10 @@ HttpMulti.prototype = {
           manfDescription: "Identify Accessory",
           designedMaxLength: 1
       }]
-      },{
+    }];
+
+    if (this.deviceType.toUpperCase() == "LIGHTBULB" || this.deviceType.toUpperCase() == "LIGHT" )  {
+   	services.push({
       sType: types.LIGHTBULB_STYPE,
       characteristics: [{
           cType: types.NAME_CTYPE,
@@ -216,64 +235,11 @@ HttpMulti.prototype = {
           manfDescription: "Change the power state of light",
           designedMaxLength: 1
       }]
-    }];         
+    });       
     }
+    
     if (this.deviceType == "fan") {
-      myType = types.FAN_STYPE;
-      services = [{
-      sType: types.ACCESSORY_INFORMATION_STYPE,
-      characteristics: [{
-          cType: types.NAME_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.name,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Name",
-          designedMaxLength: 255
-      },{
-          cType: types.MANUFACTURER_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.manufacturer,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Manufacturer",
-          designedMaxLength: 255
-      },{
-          cType: types.MODEL_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.model,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Model",
-          designedMaxLength: 255
-      },{
-          cType: types.SERIAL_NUMBER_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.serialNum,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Serial Number",
-          designedMaxLength: 255
-      },{
-          cType: types.IDENTIFY_CTYPE,
-          onUpdate: null,
-          perms: ["pw"],
-          format: "bool",
-          initialValue: false,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Identify Accessory",
-          designedMaxLength: 1
-      }]
-      },{
+      services.push({
       sType: types.FAN_STYPE,
       characteristics: [{
           cType: types.NAME_CTYPE,
@@ -299,68 +265,41 @@ HttpMulti.prototype = {
           manfDescription: "Change the power state of fan",
           designedMaxLength: 1
       }]
-    }];
-      
+    });    
     }
+    
     if (this.deviceType.toUpperCase() == "SWITCH") {
-      myType = types.SWITCH_STYPE;
-    }
-    if (this.deviceType.toUpperCase() == "LOCK") {
-      myType = types.LOCK_MECHANISM_STYPE;
-     services = [{
-      sType: types.ACCESSORY_INFORMATION_STYPE,
+   	services.push({
+      sType: types.LIGHTBULB_STYPE,
       characteristics: [{
           cType: types.NAME_CTYPE,
           onUpdate: null,
           perms: ["pr"],
           format: "string",
-          initialValue: this.name,
+          initialValue: this.serviceName,
           supportEvents: false,
           supportBonjour: false,
-          manfDescription: "Name",
+          manfDescription: "Service Name",
           designedMaxLength: 255
-      },{
-          cType: types.MANUFACTURER_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.manufacturer,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Manufacturer",
-          designedMaxLength: 255
-      },{
-          cType: types.MODEL_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.model,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Model",
-          designedMaxLength: 255
-      },{
-          cType: types.SERIAL_NUMBER_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.serialNum,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Serial Number",
-          designedMaxLength: 255
-      },{
-          cType: types.IDENTIFY_CTYPE,
-          onUpdate: null,
-          perms: ["pw"],
+      },{     
+          cType: types.POWER_STATE_CTYPE,
+          onUpdate: function(value) {
+            console.log(that.name + "...changing status....");
+            that.setPowerState(value);
+             },
+          perms: ["pw","pr","ev"],
           format: "bool",
           initialValue: false,
           supportEvents: false,
           supportBonjour: false,
-          manfDescription: "Identify Accessory",
+          manfDescription: "Change the power state of switch",
           designedMaxLength: 1
       }]
-      },{
+    });       
+    }
+    
+    if (this.deviceType.toUpperCase() == "LOCK") {
+     services.push({
     sType: types.LOCK_MECHANISM_STYPE, 
     characteristics: [{
     	cType: types.NAME_CTYPE,
@@ -405,64 +344,11 @@ HttpMulti.prototype = {
 		designedMinStep: 1,
 		designedMaxLength: 1    
       }]
-    }];    
+    });    
     }    
+    
     if (this.deviceType == "blind") {
-      myType = types.WINDOW_COVERING_STYPE;
-      services = [{
-      sType: types.ACCESSORY_INFORMATION_STYPE,
-      characteristics: [{
-          cType: types.NAME_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.name,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Name",
-          designedMaxLength: 255
-      },{
-          cType: types.MANUFACTURER_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.manufacturer,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Manufacturer",
-          designedMaxLength: 255
-      },{
-          cType: types.MODEL_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.model,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Model",
-          designedMaxLength: 255
-      },{
-          cType: types.SERIAL_NUMBER_CTYPE,
-          onUpdate: null,
-          perms: ["pr"],
-          format: "string",
-          initialValue: this.serialNum,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Serial Number",
-          designedMaxLength: 255
-      },{
-          cType: types.IDENTIFY_CTYPE,
-          onUpdate: null,
-          perms: ["pw"],
-          format: "bool",
-          initialValue: false,
-          supportEvents: false,
-          supportBonjour: false,
-          manfDescription: "Identify Accessory",
-          designedMaxLength: 1
-      }]
-      },{
+      services.push({
       sType: types.WINDOW_COVERING_STYPE,
       characteristics: [{
           cType: types.NAME_CTYPE,
@@ -515,65 +401,11 @@ HttpMulti.prototype = {
           designedMaxValue: 100,
           unit: "%"
       }]
-    }];
-      
+    });     
     }
+    
     if (this.deviceType.toUpperCase() == "GARAGEDOOR") {
-      myType = types.GARAGE_DOOR_OPENER_STYPE;
-      services = [{
-      sType: types.ACCESSORY_INFORMATION_STYPE,
-      characteristics: [{
-        cType: types.NAME_CTYPE,
-        onUpdate: null,
-        perms: ["pr"],
-        format: "string",
-        initialValue: this.name,
-        supportEvents: false,
-        supportBonjour: false,
-        manfDescription: "Name of the accessory",
-        designedMaxLength: 255
-      },{
-        cType: types.MANUFACTURER_CTYPE,
-        onUpdate: null,
-        perms: ["pr"],
-        format: "string",
-        initialValue: "Http",
-        supportEvents: false,
-        supportBonjour: false,
-        manfDescription: "Manufacturer",
-        designedMaxLength: 255
-      },{
-        cType: types.MODEL_CTYPE,
-        onUpdate: null,
-        perms: ["pr"],
-        format: "string",
-        initialValue: "Rev-1",
-        supportEvents: false,
-        supportBonjour: false,
-        manfDescription: "Model",
-        designedMaxLength: 255
-      },{
-        cType: types.SERIAL_NUMBER_CTYPE,
-        onUpdate: null,
-        perms: ["pr"],
-        format: "string",
-        initialValue: "A1S2NASF88EW",
-        supportEvents: false,
-        supportBonjour: false,
-        manfDescription: "SN",
-        designedMaxLength: 255
-      },{
-        cType: types.IDENTIFY_CTYPE,
-        onUpdate: null,
-        perms: ["pw"],
-        format: "bool",
-        initialValue: false,
-        supportEvents: false,
-        supportBonjour: false,
-        manfDescription: "Identify Accessory",
-        designedMaxLength: 1
-      }]
-    },{
+      services.push({
       sType: types.GARAGE_DOOR_OPENER_STYPE,
       characteristics: [{
         cType: types.NAME_CTYPE,
@@ -613,9 +445,9 @@ HttpMulti.prototype = {
         supportEvents: false,
         supportBonjour: false,
         manfDescription: "Change the door state",
-	designedMinValue: 0,
-	designedMaxValue: 1,
-	designedMinStep: 1,
+		designedMinValue: 0,
+		designedMaxValue: 1,
+		designedMinStep: 1,
         designedMaxLength: 1
       },{
     	cType: types.OBSTRUCTION_DETECTED_CTYPE,
@@ -632,10 +464,9 @@ HttpMulti.prototype = {
 		supportBonjour: false,
 		manfDescription: "BlaBla",
       }]
-    }];
+    });
     }
 
- 
     return services;
   }
 };
