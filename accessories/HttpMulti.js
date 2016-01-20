@@ -19,7 +19,7 @@ function HttpMulti(log, config) {
   this.up_url = config["up_url"];
   this.down_url = config["down_url"];
   this.open_url = config["open_url"];
-  this.clode_url = config["close_url"];  
+  this.close_url = config["close_url"];  
   this.on_url = config["on_url"];
   this.off_url = config["off_url"];
   this.lock_url = config["lock_url"];
