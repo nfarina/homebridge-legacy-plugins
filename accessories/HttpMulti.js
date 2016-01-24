@@ -1,14 +1,11 @@
-// switch 
-// thermostat?
-// how to query status?
-// clean up services data structure
-// simplify 
-// X post method
-// X case insensitive matching
-// X serial, hash name?
-// X garagedoor open/close
-// fan level
-// Set the XXX to XX% doesn't seem to work
+// HTTP Multiple object. Used for simple integration into backends such as Misterhouse
+// TODO
+// - thermostat object
+// - how to query status of objects and feed that back to homebridge
+
+//Fan
+// Set the fan to [on,off,low,medium,high]
+
 
 var types = require("../api").homebridge.hapLegacyTypes;
 
@@ -25,6 +22,7 @@ function HttpMulti(log, config) {
   this.lock_url = config["lock_url"];
   this.unlock_url = config["unlock_url"];
   this.brightness_url = config["brightness_url"];
+  if (this.brightness_url === undefined) this.brightness_url = config["speed_url"];
   this.name = config["name"];
   this.deviceType = config["deviceType"];
   this.method = config["http_method"];
@@ -62,9 +60,14 @@ HttpMulti.prototype = {
 	} else if (this.deviceType.toUpperCase() == "LOCK") {
 		var myURL = powerOn ? this.lock_url : this.unlock_url ;
 		
-    } else {
+    } else if (this.deviceType.toUpperCase() == "SWITCH" ||
+    			this.deviceType.toUpperCase() == "LIGHTBULB" ||
+    			this.deviceType.toUpperCase() == "FAN" ||
+    			this.deviceType.toUpperCase() == "THERMOSTAT" ) {
     	var myURL = powerOn ? this.on_url : this.off_url ;
-	}    
+	} else {
+		this.log("Unknown device Type "+this.deviceType);
+	}
 
     this.log("URL = "+myURL);
     this.log("Setting "+this.deviceType+" state to " + powerOn);
@@ -130,6 +133,45 @@ HttpMulti.prototype = {
        }
        else {
          that.log("Error '"+err+"' setting brightness level: " + body);
+       }
+     });
+    }
+  },
+
+  thermostat: function(mode,value) {
+
+    var that = this;
+
+	var myURL = "http://localhost";
+	
+	// replace %VALUE% with value in the URL
+	//myURL = myURL.replace("%VALUE%",value);
+	
+    this.log(myURL);
+    this.log("Thermostat Setting mode "+mode+" to value "+value);
+
+	if (this.method.toUpperCase() == "POST") {
+    	request.post({
+           url: myURL,
+  		 }, function(err, response, body) {
+
+       		if (!err && response.statusCode == 200) {
+         		that.log("State change sent to http module.");
+       		} else {
+        		that.log("Some errors...happened please try again");
+       		}
+     	});
+     } else {
+
+    request.get({
+       url: myURL,
+    }, function(err, response, body) {
+
+       if (!err && response.statusCode == 200) {
+         that.log("State change complete.");
+       }
+       else {
+         that.log("Error '"+err+"' setting thermostat value: " + body);
        }
      });
     }
@@ -251,6 +293,27 @@ HttpMulti.prototype = {
           supportBonjour: false,
           manfDescription: "Service Name",
           designedMaxLength: 255
+      },{
+       		cType: types.ROTATION_SPEED_CTYPE,
+            perms: ["pw","pr","ev"],
+            format: "bool",
+            initialValue: 0,
+            supportEvents: true,
+            supportBonjour: false,
+            manfDescription: "Change the speed of the fan",
+            designedMaxLength: 1,
+            onUpdate: function(value) {
+                console.log(that.name + "...changing speed to "+value+" ....");
+                if (value == 0) {
+                    that.setPowerState(0);
+                } else if (value > 0 && value < 40) {
+                    that.setBrightnessLevel("low");
+                } else if (value > 40 && value < 75) {
+                    that.setBrightnessLevel("med");
+                } else {
+                    that.setBrightnessLevel("high");
+                }
+            }
       },{
           cType: types.POWER_STATE_CTYPE,
           onUpdate: function(value) {
@@ -465,6 +528,80 @@ HttpMulti.prototype = {
 		manfDescription: "BlaBla",
       }]
     });
+    }
+
+    if (this.deviceType.toUpperCase() == "THERMOSTAT") {
+      services.push({
+    sType: types.THERMOSTAT_STYPE, 
+    characteristics: [{
+      cType: types.NAME_CTYPE,
+      onUpdate: null,
+      perms: ["pr"],
+      format: "string",
+      initialValue: "Thermostat Control",
+      supportEvents: false,
+      supportBonjour: false,
+      manfDescription: "Bla",
+      designedMaxLength: 255   
+    },{
+      cType: types.CURRENTHEATINGCOOLING_CTYPE,
+      onUpdate: function(value) { console.log("Target HC Change:",value); that.thermostat("Current HC", value); },
+      perms: ["pr","ev"],
+      format: "int",
+      initialValue: 0,
+      supportEvents: false,
+      supportBonjour: false,
+      manfDescription: "Current Mode",
+      designedMaxLength: 1,
+      designedMinValue: 0,
+      designedMaxValue: 2,
+      designedMinStep: 1,    
+    },{
+      cType: types.TARGETHEATINGCOOLING_CTYPE,
+      onUpdate: function(value) { console.log("Target HC Change:",value); that.thermostat("Target HC", value); },
+      perms: ["pw","pr","ev"],
+      format: "int",
+      initialValue: 0,
+      supportEvents: false,
+      supportBonjour: false,
+      manfDescription: "Target Mode",
+      designedMinValue: 0,
+      designedMaxValue: 3,
+      designedMinStep: 1,
+    },{
+      cType: types.CURRENT_TEMPERATURE_CTYPE,
+      onUpdate: function(value) { console.log("Current Temp Change:",value); that.thermostat("Current Temperature", value); },
+      perms: ["pr","ev"],
+      format: "int",
+      initialValue: 20,
+      supportEvents: false,
+      supportBonjour: false,
+      manfDescription: "Current Temperature",
+      unit: "celsius"
+    },{
+      cType: types.TARGET_TEMPERATURE_CTYPE,
+      onUpdate: function(value) { console.log("Target Temp Change:",value); that.thermostat("Target Temperature", value); },
+      perms: ["pw","pr","ev"],
+      format: "int",
+      initialValue: 20,
+      supportEvents: false,
+      supportBonjour: false,
+      manfDescription: "Target Temperature",
+      designedMinValue: 16,
+      designedMaxValue: 38,
+      designedMinStep: 1,
+      unit: "celsius"
+    },{
+      cType: types.TEMPERATURE_UNITS_CTYPE,
+      onUpdate: function(value) { console.log("Unit Change:",value); that.thermostat("Unit", value); },
+      perms: ["pr","ev"],
+      format: "int",
+      initialValue: 0,
+      supportEvents: false,
+      supportBonjour: false,
+      manfDescription: "Unit"
+      }]
+    });     
     }
 
     return services;
