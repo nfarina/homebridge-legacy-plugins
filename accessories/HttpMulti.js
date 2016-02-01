@@ -23,6 +23,10 @@ function HttpMulti(log, config) {
   this.unlock_url = config["unlock_url"];
   this.brightness_url = config["brightness_url"];
   if (this.brightness_url === undefined) this.brightness_url = config["speed_url"];
+  if (this.brightness_url === undefined) this.brightness_url = config["setpoint_url"];
+  this.setpoint_url = config["setpoint_url"];
+  this.gettemp_url = config["gettemp_url"];
+  this.status_url = config["status_url"];
   this.name = config["name"];
   this.deviceType = config["deviceType"];
   this.method = config["http_method"];
@@ -104,77 +108,41 @@ HttpMulti.prototype = {
     var that = this;
 
 	var myURL = this.brightness_url;
+	if (myURL === undefined) {
+		this.log("Error, brightness/speed/setpoint URL not defined!");
+	} else {
+		// replace %VALUE% with value in the URL
+		myURL = myURL.replace("%VALUE%",value);
 	
-	// replace %VALUE% with value in the URL
-	myURL = myURL.replace("%VALUE%",value);
-	
-    this.log(myURL);
-    this.log("Setting brightness level of "+this.deviceType+" to "+value);
+    	this.log(myURL);
+    	this.log("Setting brightness level of "+this.deviceType+" to "+value);
 
-	if (this.method.toUpperCase() == "POST") {
-    	request.post({
-           url: myURL,
-  		 }, function(err, response, body) {
+		if (this.method.toUpperCase() == "POST") {
+    		request.post({
+           	url: myURL,
+  		 	}, function(err, response, body) {
 
        		if (!err && response.statusCode == 200) {
          		that.log("State change sent to http module.");
        		} else {
         		that.log("Some errors...happened please try again");
        		}
-     	});
-     } else {
+     		});
+     	} else {
 
-    request.get({
-       url: myURL,
-    }, function(err, response, body) {
-
-       if (!err && response.statusCode == 200) {
-         that.log("State change complete.");
-       }
-       else {
-         that.log("Error '"+err+"' setting brightness level: " + body);
-       }
-     });
-    }
-  },
-
-  thermostat: function(mode,value) {
-
-    var that = this;
-
-	var myURL = "http://localhost";
-	
-	// replace %VALUE% with value in the URL
-	//myURL = myURL.replace("%VALUE%",value);
-	
-    this.log(myURL);
-    this.log("Thermostat Setting mode "+mode+" to value "+value);
-
-	if (this.method.toUpperCase() == "POST") {
-    	request.post({
-           url: myURL,
-  		 }, function(err, response, body) {
+    	request.get({
+       		url: myURL,
+    	}, function(err, response, body) {
 
        		if (!err && response.statusCode == 200) {
-         		that.log("State change sent to http module.");
-       		} else {
-        		that.log("Some errors...happened please try again");
+         		that.log("State change complete.");
+       		}
+       		else {
+         		that.log("Error '"+err+"' setting brightness level: " + body);
        		}
      	});
-     } else {
-
-    request.get({
-       url: myURL,
-    }, function(err, response, body) {
-
-       if (!err && response.statusCode == 200) {
-         that.log("State change complete.");
-       }
-       else {
-         that.log("Error '"+err+"' setting thermostat value: " + body);
-       }
-     });
-    }
+     }
+	}
   },
 
   getServices: function() {
@@ -538,14 +506,16 @@ HttpMulti.prototype = {
       onUpdate: null,
       perms: ["pr"],
       format: "string",
-      initialValue: "Thermostat Control",
+      initialValue: this.name,
       supportEvents: false,
       supportBonjour: false,
       manfDescription: "Bla",
       designedMaxLength: 255   
     },{
       cType: types.CURRENTHEATINGCOOLING_CTYPE,
-      onUpdate: function(value) { console.log("Target HC Change:",value); that.thermostat("Current HC", value); },
+      onUpdate: function(value) { 
+        console.log("Current HC Change:",value); 
+      },
       perms: ["pr","ev"],
       format: "int",
       initialValue: 0,
@@ -558,7 +528,9 @@ HttpMulti.prototype = {
       designedMinStep: 1,    
     },{
       cType: types.TARGETHEATINGCOOLING_CTYPE,
-      onUpdate: function(value) { console.log("Target HC Change:",value); that.thermostat("Target HC", value); },
+      onUpdate: function(value) { 
+        console.log("Target HC Change:",value); 
+      },
       perms: ["pw","pr","ev"],
       format: "int",
       initialValue: 0,
@@ -570,7 +542,9 @@ HttpMulti.prototype = {
       designedMinStep: 1,
     },{
       cType: types.CURRENT_TEMPERATURE_CTYPE,
-      onUpdate: function(value) { console.log("Current Temp Change:",value); that.thermostat("Current Temperature", value); },
+      onUpdate: function(value) { 
+        console.log("Current Temp Change:",value); 
+      },
       perms: ["pr","ev"],
       format: "int",
       initialValue: 20,
@@ -580,7 +554,10 @@ HttpMulti.prototype = {
       unit: "celsius"
     },{
       cType: types.TARGET_TEMPERATURE_CTYPE,
-      onUpdate: function(value) { console.log("Target Temp Change:",value); that.thermostat("Target Temperature", value); },
+      onUpdate: function(value) { 
+        console.log("Target Temp Change:",value); 
+        that.setBrightnessLevel(value);
+      },
       perms: ["pw","pr","ev"],
       format: "int",
       initialValue: 20,
@@ -593,7 +570,9 @@ HttpMulti.prototype = {
       unit: "celsius"
     },{
       cType: types.TEMPERATURE_UNITS_CTYPE,
-      onUpdate: function(value) { console.log("Unit Change:",value); that.thermostat("Unit", value); },
+      onUpdate: function(value) { 
+        console.log("Unit Change:",value); 
+      },
       perms: ["pr","ev"],
       format: "int",
       initialValue: 0,
