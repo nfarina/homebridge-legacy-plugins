@@ -33,6 +33,7 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [FileSensor](https://github.com/sphtkr/homebridge-filesensor)
   * [HomeMatic Platform](https://github.com/thkl/homebridge-homematic)
   * [HTTP](https://github.com/rudders/homebridge-http)
+  * [HomeAssistant](https://github.com/maddox/homebridge-homeassistant)
   * [Hyperion](https://github.com/danimal4326/homebridge-hyperion)
   * [iControl](https://github.com/nfarina/homebridge-icontrol)
   * [Indigo](https://www.npmjs.com/package/homebridge-indigo)
