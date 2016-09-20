@@ -1,5 +1,5 @@
 var path = require('path');
-var api = require('./api')
+var api = require('./api');
 var fs = require('fs');
 
 module.exports = function(homebridge) {
@@ -15,7 +15,8 @@ module.exports = function(homebridge) {
     if (file.indexOf(".js") > 0) {
       var name = file.replace(".js","");
       homebridge.registerAccessory("homebridge-legacy-plugins", name, function(logger, config) {
-        console.log("Loading legacy accessory " + name);
+        if ((process.env.DEBUG) && (process.env.DEBUG.split(',').indexOf('homebridge') !== -1))
+          console.log("Loading legacy accessory " + name);
         
         var accessoryModule = require(path.join(accessoriesDir, file));
         return new accessoryModule.accessory(logger, config);
@@ -30,11 +31,12 @@ module.exports = function(homebridge) {
     if (file.indexOf(".js") > 0) {
       var name = file.replace(".js","");
       homebridge.registerPlatform("homebridge-legacy-plugins", name, function(logger, config) {
-        console.log("Loading legacy platform " + name);
-        
+        if ((process.env.DEBUG) && (process.env.DEBUG.split(',').indexOf('homebridge') !== -1))
+          console.log("Loading legacy platform " + name);
+
         var platformModule = require(path.join(platformsDir, file));
         return new platformModule.platform(logger, config);
       });
     }
   });
-}
+};
