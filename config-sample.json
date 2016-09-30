@@ -5,7 +5,7 @@
         "port": 51826,
         "pin": "031-45-154"
     },
-    
+
     "description": "This is an example configuration file with all supported devices. You can use this as a template for creating your own configuration file containing devices you actually own.",
 
     "platforms": [
@@ -108,13 +108,6 @@
             "name": "Garage",
             "url": "http://home/URL",
             "http_method": "GET"
-        },
-        {
-            "accessory": "Tesla",
-            "name": "Tesla",
-            "description": "This shim supports controlling climate control on the Tesla Model S.",
-            "username": "tesla_email",
-            "password" : "tesla_password"
         },
         {
             "accessory": "X10",

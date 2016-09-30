@@ -53,3 +53,4 @@ Here's what has been removed so far, along with a link to the replacement plugin
   * [Wink](https://github.com/kraigm/homebridge-wink)
   * [Yamaha](https://github.com/neonightmare/homebridge-yamaha)
   * [Z-Way Server](https://github.com/SphtKr/homebridge-zway)
+  * [Tesla](https://github.com/nfarina/homebridge-tesla)
