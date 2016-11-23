@@ -24,7 +24,7 @@
     "komponist": "0.1.0",
     "lifx": "git+https://github.com/magicmonkey/lifxjs.git",
     "lifx-api": "^1.0.1",
-    "request": "2.49.x",
+    "request": "2.74.0",
     "telldus-live": "^0.2.1",
     "xml2js": "0.4.x"
   }
